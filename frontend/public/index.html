@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>SinergIA – Gerar PDF</title>
+</head>
+<body>
+  <h2>Gerador de PDF</h2>
+
+  <form id="pdfForm">
+    <label>Imagens (PNG ou JPG):</label><br>
+    <input type="file" id="files" name="files" multiple required><br><br>
+
+    <label>Nome do Arquivo PDF:</label><br>
+    <input type="text" name="filename" value="meu_livro" required><br><br>
+
+    <label>Formato da Página:</label><br>
+    <select name="page_format">
+      <option value="A4">A4</option>
+      <option value="A5">A5</option>
+      <option value="Letter">Carta</option>
+      <option value="Square">Quadrado</option>
+    </select><br><br>
+
+    <label>Texto do Cabeçalho:</label><br>
+    <input type="text" name="header_text"><br><br>
+
+    <label>Fonte do Cabeçalho:</label><br>
+    <input type="text" name="header_font" value="Arial"><br><br>
+
+    <label>Tamanho do Cabeçalho:</label><br>
+    <input type="number" name="header_size" value="12"><br><br>
+
+    <label>Texto do Rodapé:</label><br>
+    <input type="text" name="footer_text"><br><br>
+
+    <label>Fonte do Rodapé:</label><br>
+    <input type="text" name="footer_font" value="Arial"><br><br>
+
+    <label>Tamanho do Rodapé:</label><br>
+    <input type="number" name="footer_size" value="10"><br><br>
+
+    <label><input type="checkbox" id="insert_page_marker" name="insert_page_marker"> Incluir numeração nas páginas</label><br>
+    <label><input type="checkbox" id="fill_full_page" name="fill_full_page"> Preencher página inteira</label><br><br>
+
+    <button type="submit">GERAR PDF</button>
+  </form>
+
+  <div id="loading" style="display:none;">Gerando PDF, aguarde...</div>
+
+  <script>
+    const form = document.getElementById('pdfForm');
+    const loadingDiv = document.getElementById('loading');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      loadingDiv.style.display = 'block';
+
+      const formData = new FormData();
+
+      // Adiciona os arquivos
+      const filesInput = document.getElementById("files");
+      for (let i = 0; i < filesInput.files.length; i++) {
+        formData.append("files", filesInput.files[i]);
+      }
+
+      // Adiciona os demais campos
+      formData.append("filename", form.elements["filename"].value);
+      formData.append("page_format", form.elements["page_format"].value);
+      formData.append("header_text", form.elements["header_text"].value);
+      formData.append("header_font", form.elements["header_font"].value);
+      formData.append("header_size", form.elements["header_size"].value);
+      formData.append("footer_text", form.elements["footer_text"].value);
+      formData.append("footer_font", form.elements["footer_font"].value);
+      formData.append("footer_size", form.elements["footer_size"].value);
+
+      // Checkboxes: sempre envia "true" ou "false" (string)
+      formData.append("insert_page_marker", document.getElementById("insert_page_marker").checked ? "true" : "false");
+      formData.append("fill_full_page", document.getElementById("fill_full_page").checked ? "true" : "false");
+
+      try {
+        //const response = await fetch("https://sinergia-pdf-api.onrender.com/gerar-pdf", {
+        const response = await fetch("http://localhost:8000/gerar-pd", {
+          method: "POST",
+          body: formData
+        });
+
+        loadingDiv.style.display = 'none';
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error("Erro na resposta da API: " + errText);
+        }
+
+        const blob = await response.blob();
+        const filename = form.elements["filename"].value + ".pdf";
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        console.log("PDF gerado com sucesso!");
+
+      } catch (error) {
+        loadingDiv.style.display = 'none';
+        console.error("Erro:", error);
+        alert("Erro ao gerar PDF: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

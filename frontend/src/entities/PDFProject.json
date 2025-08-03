@@ -1,0 +1,138 @@
+{
+  "name": "PDFProject",
+  "type": "object",
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "description": "Name of the PDF project"
+    },
+    "filename": {
+      "type": "string",
+      "description": "Output PDF filename"
+    },
+    "page_format": {
+      "type": "string",
+      "enum": [
+        "A4",
+        "LETTER",
+        "AMAZON",
+        "SQUARE",
+        "A5-V",
+        "A5-H",
+        "A4-2A5H"
+      ],
+      "default": "A4",
+      "description": "Page format for the PDF"
+    },
+    "header_text": {
+      "type": "string",
+      "description": "Header text for pages"
+    },
+    "header_font": {
+      "type": "string",
+      "enum": [
+        "Arial",
+        "Courier",
+        "Helvetica",
+        "Times"
+      ],
+      "default": "Arial",
+      "description": "Header font family"
+    },
+    "header_size": {
+      "type": "number",
+      "default": 12,
+      "description": "Header font size"
+    },
+    "footer_text": {
+      "type": "string",
+      "description": "Footer text for pages"
+    },
+    "footer_font": {
+      "type": "string",
+      "enum": [
+        "Arial",
+        "Courier",
+        "Helvetica",
+        "Times"
+      ],
+      "default": "Arial",
+      "description": "Footer font family"
+    },
+    "footer_size": {
+      "type": "number",
+      "default": 10,
+      "description": "Footer font size"
+    },
+    "include_page_marker": {
+      "type": "boolean",
+      "default": false,
+      "description": "Include page X of Y marker"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL of uploaded logo image"
+    },
+    "qr_link": {
+      "type": "string",
+      "default": "https://sinergiahub.com",
+      "description": "Link for QR code on back cover"
+    },
+    "fill_full_page": {
+      "type": "boolean",
+      "default": false,
+      "description": "Fill entire page without margins"
+    },
+    "uploaded_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "List of uploaded image files"
+    },
+    "generated_pdfs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Generated PDF files"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "generating",
+        "completed",
+        "error"
+      ],
+      "default": "draft",
+      "description": "Project status"
+    }
+  },
+  "required": [
+    "project_name",
+    "filename"
+  ]
+}
